@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/useAuthStore";
 import { Camera, Mail, User } from "lucide-react";
 
 const ProfilePage = () => {
-  const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+  const { authUser, isUpdatingProfile, updateProfileStore } = useAuthStore();
 
   const baseImageUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -11,24 +11,25 @@ const ProfilePage = () => {
 
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
-    profile_pic: "",
+    fullName: "",
   });
 
   useEffect(() => {
     if (authUser.profilePic) {
       setSelectedImg(baseImageUrl + authUser.profilePic);
     }
-  }, [authUser?.profilePic]);
+  }, [authUser]);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append("profile_pic", file);
+    await updateProfileStore({ profile_pic: file });
+  };
 
-    await updateProfile({ formData });
+  const handleSubmit = async (e) => {
+    // e.preventDefault();
+    await updateProfileStore(formData);
   };
 
   return (
@@ -41,17 +42,17 @@ const ProfilePage = () => {
           </div>
 
           {/* avatar upload section */}
-
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <img
-                src={selectedImg || "/avatar.png"}
-                alt="Profile"
-                className="size-32 rounded-full object-cover border-4 "
-              />
-              <label
-                htmlFor="avatar-upload"
-                className={`
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <img
+                  src={selectedImg || "/avatar.png"}
+                  alt="Profile"
+                  className="size-32 rounded-full object-cover border-4 "
+                />
+                <label
+                  htmlFor="avatar-upload"
+                  className={`
                   absolute bottom-0 right-0 
                   bg-base-content hover:scale-105
                   p-2 rounded-full cursor-pointer 
@@ -60,46 +61,64 @@ const ProfilePage = () => {
                     isUpdatingProfile ? "animate-pulse pointer-events-none" : ""
                   }
                 `}
-              >
-                <Camera className="w-5 h-5 text-base-200" />
+                >
+                  <Camera className="w-5 h-5 text-base-200" />
+                  <input
+                    type="file"
+                    id="avatar-upload"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUpdatingProfile}
+                  />
+                </label>
+              </div>
+              <p className="text-sm text-zinc-400">
+                "Click the camera icon to update your photo"
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-1.5">
+                <div className="text-sm text-zinc-400 flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Full Name
+                </div>
                 <input
-                  type="file"
-                  id="avatar-upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUpdatingProfile}
+                  type="text"
+                  className={`input input-bordered w-full`}
+                  placeholder={authUser.fullName}
+                  value={formData.fullName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fullName: e.target.value })
+                  }
                 />
-              </label>
-            </div>
-            <p className="text-sm text-zinc-400">
-              {isUpdatingProfile
-                ? "Uploading..."
-                : "Click the camera icon to update your photo"}
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
-                {authUser?.fullName}
-              </p>
-            </div>
 
-            <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address
+              <div className="space-y-1.5">
+                <div className="text-sm text-zinc-400 flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  Email Address
+                </div>
+                <input
+                  type="text"
+                  className={`input input-bordered w-full`}
+                  placeholder={authUser.email}
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
-                {authUser?.email}
-              </p>
             </div>
-          </div>
+            <button
+              type="submit"
+              className="btn btn-primary w-full mt-8"
+              disabled={isUpdatingProfile}
+            >
+              {isUpdatingProfile ? "Uploading..." : "Update"}
+            </button>
+          </form>
 
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium  mb-4">Account Information</h2>

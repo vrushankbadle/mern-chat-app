@@ -3,7 +3,7 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
-  authUser: "empty",
+  authUser: null,
   isSigningUp: false,
   isLoggingIn: false,
   isUpdatingProfile: false,
@@ -57,20 +57,16 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  updateProfile: async (data) => {
+  updateProfileStore: async (data) => {
     set({ isUpdatingProfile: true });
     try {
-      const res = await axiosInstance.put(
-        "/auth/update-profile",
-        data.formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      set({ authUser: res.data });
-      toast.success("Profle Updated Successfully");
+      const res = await axiosInstance.put("/auth/update-profile", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      set({ authUser: res.data ? res.data : "authUser: No Data Provided" });
+      if (data.profile_pic) return toast.success("Image Added Successfully");
     } catch (error) {
       toast.error(error.response.data.message);
     } finally {

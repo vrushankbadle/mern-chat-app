@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
         req.user._id + "-" + req.params.id + "." + file.mimetype.split("/")[1]
       );
     } else {
-      cb(null, req.user._id + "." + file.mimetype.split("/")[1]);
+      cb(null, req.user._id + ".jpeg");
     }
   },
 });

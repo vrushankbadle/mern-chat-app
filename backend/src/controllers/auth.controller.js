@@ -88,31 +88,26 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   const userId = req.user._id;
   const { fullName } = req.user;
-
+  // console.log("updateProfile.body: ", req.body);
+  // console.log("updateProfile.file: ", req.file);
   try {
     if (req.file === "ERROR") {
       return res.status(400).json({ message: "Incorrect File Format" });
-    }
-
-    if (req.file) {
+    } else if (req.file) {
       var updatedUser = await User.findByIdAndUpdate(
         userId,
         { profilePic: req.file.path },
         { new: true }
       );
       console.log("Updated: profilePic");
-    }
-
-    if (req.body.fullName && req.body.fullName !== fullName) {
+    } else if (req.body?.fullName && req.body.fullName !== fullName) {
       var updatedUser = await User.findByIdAndUpdate(
         userId,
         { fullName: req.body.fullName },
         { new: true }
       );
       console.log("Updated: fullName");
-    }
-
-    if (req.body.password) {
+    } else if (req.body?.password) {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
