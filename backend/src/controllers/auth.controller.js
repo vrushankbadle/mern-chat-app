@@ -2,6 +2,10 @@ import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
 import { generateToken } from "../lib/utils.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+const backendURL = process.env.BACKEND_URL;
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
@@ -88,15 +92,17 @@ export const logout = (req, res) => {
 export const updateProfile = async (req, res) => {
   const userId = req.user._id;
   const { fullName } = req.user;
+
   // console.log("updateProfile.body: ", req.body);
   // console.log("updateProfile.file: ", req.file);
+
   try {
     if (req.file === "ERROR") {
       return res.status(400).json({ message: "Incorrect File Format" });
     } else if (req.file) {
       var updatedUser = await User.findByIdAndUpdate(
         userId,
-        { profilePic: req.file.path },
+        { profilePic: backendURL + req.file.path },
         { new: true }
       );
       console.log("Updated: profilePic");

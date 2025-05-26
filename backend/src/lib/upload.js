@@ -1,6 +1,7 @@
 import multer from "multer";
 
 let isChat = false;
+const backendURL = process.env.BACKEND_URL;
 
 const imageType = (file) => {
   if (file.fieldname === "chat_image") {
@@ -10,6 +11,8 @@ const imageType = (file) => {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    // console.log("upload.multer: ", file.path);
+
     imageType(file);
     cb(null, `uploads/${file.fieldname}`);
   },

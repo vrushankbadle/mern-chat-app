@@ -5,8 +5,6 @@ import { Camera, Mail, User } from "lucide-react";
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, updateProfileStore } = useAuthStore();
 
-  const baseImageUrl = import.meta.env.VITE_BACKEND_URL;
-
   const [selectedImg, setSelectedImg] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -16,7 +14,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (authUser.profilePic) {
-      setSelectedImg(baseImageUrl + authUser.profilePic);
+      setSelectedImg(authUser.profilePic);
     }
   }, [authUser]);
 

@@ -1,5 +1,10 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
+import { getRecieverSocketId, io } from "../lib/socket.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+const backendURL = process.env.BACKEND_URL;
 
 export const getUsers = async (req, res) => {
   try {
@@ -42,9 +47,14 @@ export const sendMessage = async (req, res) => {
 
     let imageUrl;
 
+    // console.log("messages.controller.body: ", req.body);
+    // console.log("messages.controller.file: ", req.file);
+
     if (req.file) {
-      imageUrl = req.file.path;
+      imageUrl = backendURL + req.file.path;
     }
+
+    console.log(imageUrl);
 
     const newMessage = new Message({
       senderId: myId,
@@ -57,7 +67,13 @@ export const sendMessage = async (req, res) => {
 
     // todo: realtime functionality with socket.io
 
-    res.status(201).json({ newMessage });
+    const recieverSocketId = getRecieverSocketId(userToChatId);
+
+    if (recieverSocketId) {
+      io.to(recieverSocketId).emit("newMessage", newMessage);
+    }
+
+    res.status(201).json(newMessage);
   } catch (error) {
     console.log("Error in sendMessage controller: ", error.message);
     res.status(500).json({ message: "Internal Server Error" });
