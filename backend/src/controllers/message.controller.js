@@ -54,8 +54,6 @@ export const sendMessage = async (req, res) => {
       imageUrl = backendURL + req.file.path;
     }
 
-    console.log(imageUrl);
-
     const newMessage = new Message({
       senderId: myId,
       receiverId: userToChatId,

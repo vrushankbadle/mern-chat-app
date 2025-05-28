@@ -1,7 +1,6 @@
 import multer from "multer";
 
 let isChat = false;
-const backendURL = process.env.BACKEND_URL;
 
 const imageType = (file) => {
   if (file.fieldname === "chat_image") {

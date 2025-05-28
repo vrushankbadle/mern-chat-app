@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
+import path from "path";
+
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 
@@ -13,6 +15,7 @@ dotenv.config();
 connectDB();
 
 const port = process.env.PORT;
+const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -27,6 +30,15 @@ app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/uploads", express.static("uploads"));
 
+if (process.env.NODE_ENV === "production") {
+  console.log("NODE_ENV: ", process.env.NODE_ENV);
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html "));
+  });
+}
+
 server.listen(port, () => {
-  console.log(`Server is listening on ${port}`);
+  console.log(`Server is listening on port ${port}`);
 });
