@@ -14,6 +14,8 @@ import { useAuthStore } from "./store/useAuthStore.js";
 import { useThemeStore } from "./store/useThemeStore.js";
 
 const App = () => {
+  console.log("NODE Environment: ", import.meta.env.MODE);
+
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
 

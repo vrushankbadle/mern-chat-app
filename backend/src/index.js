@@ -31,14 +31,14 @@ app.use("/api/messages", messageRoutes);
 app.use("/uploads", express.static("uploads"));
 
 if (process.env.NODE_ENV === "production") {
-  console.log("NODE_ENV: ", process.env.NODE_ENV);
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("*", (req, res) => {
+  app.get((req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html "));
   });
 }
 
 server.listen(port, () => {
   console.log(`Server is listening on port ${port}`);
+  console.log("NODE Environment: ", process.env.NODE_ENV);
 });
