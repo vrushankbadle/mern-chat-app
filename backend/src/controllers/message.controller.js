@@ -4,7 +4,8 @@ import { getRecieverSocketId, io } from "../lib/socket.js";
 import dotenv from "dotenv";
 
 dotenv.config();
-const backendURL = process.env.BACKEND_URL;
+const backendURL =
+  process.env.NODE_ENV === "development" ? process.env.BACKEND_URL : "/";
 
 export const getUsers = async (req, res) => {
   try {

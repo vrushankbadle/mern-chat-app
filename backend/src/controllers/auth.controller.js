@@ -5,7 +5,8 @@ import { generateToken } from "../lib/utils.js";
 import dotenv from "dotenv";
 
 dotenv.config();
-const backendURL = process.env.BACKEND_URL;
+const backendURL =
+  process.env.NODE_ENV === "development" ? process.env.BACKEND_URL : "/";
 
 export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
