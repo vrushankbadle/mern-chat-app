@@ -19,7 +19,13 @@ const storage = multer.diskStorage({
     if (isChat) {
       cb(
         null,
-        req.user._id + "-" + req.params.id + "." + file.mimetype.split("/")[1]
+        req.user._id +
+          "-" +
+          req.params.id +
+          "-" +
+          file.originalname.split(".")[0] +
+          "." +
+          file.mimetype.split("/")[1]
       );
     } else {
       cb(null, req.user._id + ".jpeg");
